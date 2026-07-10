@@ -5,6 +5,7 @@ import {
 } from "./notesService";
 
 export default function NotesTeacherView({ user }) {
+    console.log("USER:", user);
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [file, setFile] = useState(null);

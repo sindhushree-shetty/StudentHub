@@ -5,6 +5,8 @@ import { updateDoc, doc, getDoc } from 'firebase/firestore'
 import { db, auth } from './firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import NotesTeacherView from './NotesTeacherView'
+import NotesStudentView from './NotesStudentView'
+
 const questionBank = {
   'class8-science': [
     { question: "Which type of fabric absorbs less water and dries faster?", options: ["Cotton", "Wool", "Synthetic", "Silk"], answer: "Synthetic" },
@@ -949,13 +951,19 @@ async function goNext(finalScore, finalLog) {
   }
   // ── ASSIGN QUIZ (Teacher) ──
   // ── NOTES (Teacher) ──
-if (page === 'notes') {
+// ── NOTES ──
+if (page === "notes") {
   return (
     <>
       <Navbar />
-      <NotesTeacherView user={user} />
+
+      {user.role === "teacher" ? (
+        <NotesTeacherView user={user} />
+      ) : (
+        <NotesStudentView user={user} />
+      )}
     </>
-  )
+  );
 }
   if (page === 'assign') {
     if (allQuizzes.length === 0) loadQuizzesForAssign()
@@ -1293,12 +1301,24 @@ if (page === 'notes') {
               <h2 className="text-2xl font-extrabold text-[#1a1a2e] dark:text-white">Your Assignments</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">Quizzes your teacher has scheduled for you</p>
             </div>
-            <button
-              onClick={() => { loadLeaderboardData(null); setPage('leaderboard') }}
-              className="rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              🏆 Leaderboard
-            </button>
+            <div className="flex gap-3">
+  <button
+    onClick={() => setPage("notes")}
+    className="rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+  >
+    📄 Notes
+  </button>
+
+  <button
+    onClick={() => {
+      loadLeaderboardData(null);
+      setPage("leaderboard");
+    }}
+    className="rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+  >
+    🏆 Leaderboard
+  </button>
+</div>
           </div>
 
           {assignmentsLoading && <p className="text-sm text-gray-500 dark:text-gray-400">Loading assignments...</p>}
